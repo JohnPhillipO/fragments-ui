@@ -1,13 +1,18 @@
 // src/app.js
 
 import { Auth, getUser } from "./auth";
-import { getUserFragments } from "./api";
+import { createUserFragment, getUserFragments } from "./api";
 
 async function init() {
   // Get our UI elements
   const userSection = document.querySelector("#user");
   const loginBtn = document.querySelector("#login");
   const logoutBtn = document.querySelector("#logout");
+
+  // Get our UI elements for creating a text fragment
+  const fragmentSection = document.querySelector("#fragment");
+  const addFragmentBtn = document.querySelector("#addFragment");
+  const inputValue = document.querySelector("#message");
 
   // Wire up event handlers to deal with login and logout.
   loginBtn.onclick = () => {
@@ -31,11 +36,18 @@ async function init() {
 
   getUserFragments(user);
 
+  addFragmentBtn.onclick = () => {
+    const message = inputValue.value;
+    createUserFragment(user, message);
+    getUserFragments(user);
+  };
+
   // Log the user info for debugging purposes
   console.log({ user });
 
-  // Update the UI to welcome the user
+  // Update the UI to welcome the user and unhide the fragment section
   userSection.hidden = false;
+  fragmentSection.hidden = false;
 
   // Show the user's username
   userSection.querySelector(".username").innerText = user.username;
