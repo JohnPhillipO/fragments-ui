@@ -38,8 +38,7 @@ async function init() {
 
   addFragmentBtn.onclick = () => {
     const message = inputValue.value;
-    createUserFragment(user, message);
-    getUserFragments(user);
+    createUserFragment(message);
   };
 
   // Log the user info for debugging purposes

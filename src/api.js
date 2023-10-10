@@ -3,6 +3,8 @@
 // fragments microservice API, defaults to localhost:8080
 const apiUrl = process.env.API_URL || "http://localhost:8080";
 
+import { getUser } from "./auth";
+
 /**
  * Given an authenticated user, request all fragments for this user from the
  * fragments microservice (currently only running locally). We expect a user
@@ -20,29 +22,56 @@ export async function getUserFragments(user) {
     }
     const data = await res.json();
     console.log("Got user fragments data", { data });
+
+    // Update the UI to display the fragments
+    await displayFragments(data.fragments);
   } catch (err) {
     console.error("Unable to call GET /v1/fragment", { err });
   }
 }
 
-export async function createUserFragment(user, message) {
+async function displayFragments(fragments) {
+  const fragmentList = document.querySelector("#fragmentList");
+
+  // Clear the existing list
+  fragmentList.innerHTML = "";
+
+  // Create a list item for each fragment and append it to the fragment list
+  fragments.forEach((fragment) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = fragment;
+    fragmentList.appendChild(listItem);
+  });
+}
+
+export async function createUserFragment(message) {
   console.log("Creating a user fragment");
   try {
-    const messageBuffer = Buffer.from(message);
-    const res = await fetch("http://localhost:8080/v1/fragments", {
+    const user = await getUser();
+    if (!user) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    const requestBody = message ? message : ""; // Set the message as the request body
+
+    const res = await fetch(`${apiUrl}/v1/fragments`, {
       method: "POST",
       headers: {
-        "Content-Type": "text/plain",
         ...user.authorizationHeaders(),
+        "Content-Type": "text/plain", // Set the content type to 'text/plain'
       },
-      body: messageBuffer,
+      body: requestBody,
     });
+
     if (!res.ok) {
       throw new Error(`${res.status} ${res.statusText}`);
     }
-    const data = await res.json();
-    console.log("Created fragment", { data });
+
+    //const data = await res.json();
+    //console.log("Got user fragments data", { data });
+    getUserFragments(user);
   } catch (err) {
-    console.error("Unable to call POST /v1/fragment", { err });
+    console.error("Unable to create fragment", { err });
   }
 }
