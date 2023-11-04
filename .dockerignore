@@ -1,0 +1,6 @@
+# Remember to add this to docker ignore
+.parcel-cache/
+.vscode/
+dist/
+node_modules/
+.prettierrc
