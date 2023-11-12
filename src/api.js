@@ -3,6 +3,7 @@
 // fragments microservice API, defaults to localhost:8080
 const apiUrl = process.env.API_URL || "http://localhost:8080";
 
+import { connected } from "process";
 import { getUser } from "./auth";
 
 /**
@@ -24,13 +25,32 @@ export async function getUserFragments(user) {
     console.log("Got user fragments data", { data });
 
     // Update the UI to display the fragments
-    await displayFragments(data.fragments);
+    await displayFragments(data.fragments, user);
   } catch (err) {
     console.error("Unable to call GET /v1/fragment", { err });
   }
 }
 
-async function displayFragments(fragments) {
+async function getUserFragment(user, fragment) {
+  const metadata = document.querySelector("#metadata");
+  console.log("Requesting user fragments data...");
+  try {
+    const res = await fetch(`${apiUrl}/v1/fragments/${fragment}/info`, {
+      // Generate headers with the proper Authorization bearer token to pass
+      headers: user.authorizationHeaders(),
+    });
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    const data = await res.json();
+    metadata.textContent = JSON.stringify(data);
+    console.log("Got user fragments data", { data });
+  } catch (err) {
+    console.error(`Unable to call GET /v1/fragments/${fragment}/info`, { err });
+  }
+}
+
+async function displayFragments(fragments, user) {
   const fragmentList = document.querySelector("#fragmentList");
 
   // Clear the existing list
@@ -38,13 +58,18 @@ async function displayFragments(fragments) {
 
   // Create a list item for each fragment and append it to the fragment list
   fragments.forEach((fragment) => {
-    const listItem = document.createElement("li");
+    const listItem = document.createElement("button");
     listItem.textContent = fragment;
+    listItem.style.marginBottom = "10px";
+    listItem.onclick = () => {
+      getUserFragment(user, fragment);
+    };
     fragmentList.appendChild(listItem);
   });
 }
 
-export async function createUserFragment(message) {
+export async function createUserFragment(message, contentType) {
+  const successMessage = document.querySelector("#successMsg");
   console.log("Creating a user fragment");
   try {
     const user = await getUser();
@@ -59,18 +84,15 @@ export async function createUserFragment(message) {
       method: "POST",
       headers: {
         ...user.authorizationHeaders(),
-        "Content-Type": "text/plain", // Set the content type to 'text/plain'
+        "Content-Type": contentType, // Set the content type to 'text/plain'
       },
       body: requestBody,
     });
-
+    successMessage.innerHTML =
+      'Created Fragment. (Click on "Get User Fragment" to view)';
     if (!res.ok) {
       throw new Error(`${res.status} ${res.statusText}`);
     }
-
-    //const data = await res.json();
-    //console.log("Got user fragments data", { data });
-    getUserFragments(user);
   } catch (err) {
     console.error("Unable to create fragment", { err });
   }

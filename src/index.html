@@ -16,19 +16,33 @@
     <section hidden id="user">
       <h2>Hello <span class="username"></span>!</h2>
     </section>
+    <section hidden id="actionButton">
+      <button id="createFragment">Create Fragment</button>
+      <button id="getFragment">Get User Fragments</button>
+    </section>
     <section hidden id="fragment">
-      <h3>Create a simple text fragment</h3>
+      <h3>Create a Fragment</h3>
+      <label for="contentType">Choose a type:</label>
+      <select id="contentType" name="contentType">
+        <option value="1">text/plain</option>
+        <option value="2">text/html</option>
+        <option value="3">text/markdown</option>
+        <option value="4">application/json</option>
+      </select>
+      <br /><br />
       <label for="message">Message:</label>
-      <input type="text" id="message" /><br /><br />
-      <button id="addFragment">Send</button>
-
+      <textarea id="message"></textarea><br /><br />
+      <button id="addFragment">Send</button><br /><br />
+      <p id="successMsg"></p>
+    </section>
+    <section hidden id="userFragment">
       <!-- Add a div to display the list of fragments -->
       <h3>Your Fragments:</h3>
+      <p>Click a fragment to view metadata (In console or page).</p>
       <div id="fragmentList">
-        <ul>
-          <!-- Fragments will be displayed here dynamically -->
-        </ul>
+        <!-- Fragments will be displayed here dynamically -->
       </div>
+      <p id="metadata"></p>
     </section>
   </body>
 </html>
