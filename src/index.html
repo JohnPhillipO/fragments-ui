@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Fragments UI</title>
     <link rel="stylesheet" href="https://unpkg.com/bamboo.css" />
+    <link rel="stylesheet" href="../css/styles.css" />
     <script type="module" src="app.js"></script>
   </head>
   <body>
@@ -18,8 +19,12 @@
     </section>
     <section hidden id="actionButton">
       <button id="createFragment">Create Fragment</button>
-      <button id="getFragment">Get User Fragments</button>
+      <button id="getFragment">View Fragments</button>
+      <button id="deleteFragment">Delete Fragment</button>
+      <button id="updateFragment">Update Fragment</button>
     </section>
+
+    <!--CREATE FRAGMENTS COMPONENTS-->
     <section hidden id="fragment">
       <h3>Create a Fragment</h3>
       <label for="contentType">Choose a type:</label>
@@ -28,21 +33,99 @@
         <option value="2">text/html</option>
         <option value="3">text/markdown</option>
         <option value="4">application/json</option>
+        <option value="4">image/png</option>
+        <option value="4">image/jpeg</option>
+        <option value="4">image/webp</option>
+        <option value="4">image/gif</option>
       </select>
       <br /><br />
-      <label for="message">Message:</label>
-      <textarea id="message"></textarea><br /><br />
+      <div id="imageInput" hidden>
+        <label for="messageFile">File:</label>
+        <input type="file" id="messageFile" /><br /><br />
+      </div>
+      <div id="textInput" hidden>
+        <label for="message">Message:</label>
+        <textarea id="message"></textarea><br /><br />
+      </div>
       <button id="addFragment">Send</button><br /><br />
       <p id="successMsg"></p>
     </section>
+
+    <!--VIEW FRAGMENTS COMPONENTS-->
     <section hidden id="userFragment">
       <!-- Add a div to display the list of fragments -->
       <h3>Your Fragments:</h3>
-      <p>Click a fragment to view metadata (In console or page).</p>
-      <div id="fragmentList">
+      <p>
+        Select a fragment from the select list to view the fragments content.
+      </p>
+      <select id="fragmentList">
         <!-- Fragments will be displayed here dynamically -->
+      </select>
+      <br /><br />
+      <span id="convertFragment" hidden>
+        <hr />
+        <p>
+          <strong>Convert Type?</strong><br /><br />
+          Select a valid conversion type based on the fragments content type.<br />
+          Type conversion will not edit the fragment!
+        </p>
+        <select id="convertTypeList"></select>
+        <br /><br />
+        <hr />
+      </span>
+      <table id="metadataTable" hidden>
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody id="metadataBody"></tbody>
+      </table>
+      <div id="fragmentData" hidden></div>
+      <br />
+    </section>
+
+    <!--DELETE COMPONENTS-->
+    <section id="deleteSection" hidden>
+      <h3>Delete a Fragment:</h3>
+      <p>Select a fragment that you want to delete from the select list.</p>
+      <select id="fragmentListDelete">
+        <!-- Fragments will be displayed here dynamically -->
+      </select>
+      <br /><br />
+      <div id="deleteAction" hidden>
+        <button id="deleteButton">Delete</button>
+        <br /><br />
+        <p>
+          ⚠️NOTE: Once you click delete you won't be able to get this fragment
+          back.
+        </p>
       </div>
-      <p id="metadata"></p>
+    </section>
+
+    <!--UPDATE COMPONENTS-->
+    <section id="updateSection" hidden>
+      <h3>Update a fragment</h3>
+      <p>Select a fragment that you want to update from the select list.</p>
+      <select id="fragmentListUpdate">
+        <!-- Fragments will be displayed here dynamically-->
+      </select>
+      <br /><br />
+      <div id="updateAction" hidden>
+        <div id="updateText" hidden>
+          <label for="newMessage">Message:</label>
+          <textarea id="newMessage"></textarea><br /><br />
+        </div>
+        <div id="updateImage" hidden>
+          <label for="newMessageFile">File:</label>
+          <input type="file" id="newMessageFile" />
+          <br /><br />
+        </div>
+        <button id="updateBtn">Update</button>
+        <br /><br />
+      </div>
+      <p id="updateSuccess"></p>
     </section>
   </body>
 </html>
